@@ -14,7 +14,7 @@ Arbin<T>::~Arbin()
     vaciar(raiz);
 }
 
-void vaciar(nodo *raiz)
+void Arbin<T>::vaciar(nodo *raiz)
 {
     if (raiz != NULL) {
         vaciar(raiz->izq);
@@ -34,7 +34,7 @@ void Arbin<T>::insertar(const T & elemento)
     insertarordenado(raiz, aux);
 }
 
-void insertarordenado(nodo *raiz, nodo *aux)
+void Arbin<T>::insertarordenado(nodo *raiz, nodo *aux)
 {
     if (raiz == NULL)
         raiz = aux;
@@ -53,7 +53,7 @@ bool Arbin<T>::pertence(const T & elemento) const
     buscarcoincidenciaenarbol(aux, elemento);        
 }
 
-bool buscarcoincidenciaenarbol(nodo *raiz, const T & elemento) const
+bool Arbin<T>::buscarcoincidenciaenarbol(nodo *raiz, const T & elemento) const
 {
     if (raiz != NULL)
         return false;
@@ -102,7 +102,7 @@ int Arbin<T>::profundidad() const
     return profundidadarbol(raiz);
 }
 
-int profundidadarbol(nodo *raiz) const{
+int Arbin<T>::profundidadarbol(nodo *raiz) const{
     if (raiz == NULL)
         return 0;
     else {
@@ -117,4 +117,6 @@ int profundidadarbol(nodo *raiz) const{
             return 1 + profundidadDer;
     }
 }
+
+////ULI ACA DEFINITE LOS TIPOS DE DATPS QUE ACEPTA T ASI NO SALE EL ERROR
 
