@@ -1,6 +1,7 @@
 #include "arbin.h"
+#include "Lista.h"
 #include <iostream>
-#include <cassert> // no lo use
+
 
 template<typename T>
 Arbin<T>::Arbin()
@@ -14,6 +15,7 @@ Arbin<T>::~Arbin()
     vaciar(raiz);
 }
 
+template<typename T>
 void Arbin<T>::vaciar(nodo *raiz)
 {
     if (raiz != NULL) {
@@ -24,7 +26,20 @@ void Arbin<T>::vaciar(nodo *raiz)
     }
 }
 
-template<typename T> // no se como hacer que el arbol inserte de forma ordenda si los elementos no son numeros
+template<typename T>
+void Arbin<T>::insertarordenado(nodo *& raizR, nodo *aux)
+{
+    if (raizR == NULL)
+        raizR = aux;
+    else {
+        if (aux->elemento < raizR->elemento)
+            insertarordenado(raizR->izq, aux);
+        else
+            insertarordenado(raizR->der, aux);
+    }
+}
+
+template<typename T> 
 void Arbin<T>::insertar(const T & elemento)
 {
     nodo * aux = new nodo;
@@ -34,28 +49,10 @@ void Arbin<T>::insertar(const T & elemento)
     insertarordenado(raiz, aux);
 }
 
-void Arbin<T>::insertarordenado(nodo *raiz, nodo *aux)
-{
-    if (raiz == NULL)
-        raiz = aux;
-    else {
-        if (aux->elemento < raiz->elemento)
-            insertarordenado(raiz->izq, aux);
-        else
-            insertarordenado(raiz->der, aux);
-    }
-}
-
 template<typename T>
-bool Arbin<T>::pertence(const T & elemento) const
-{
-    nodo * aux = raiz; 
-    buscarcoincidenciaenarbol(aux, elemento);        
-}
-
 bool Arbin<T>::buscarcoincidenciaenarbol(nodo *raiz, const T & elemento) const
 {
-    if (raiz != NULL)
+    if (raiz == NULL)
         return false;
     else {
         if (raiz->elemento == elemento)
@@ -69,6 +66,27 @@ bool Arbin<T>::buscarcoincidenciaenarbol(nodo *raiz, const T & elemento) const
     }
 }
 
+template<typename T>
+bool Arbin<T>::pertence(const T & elemento) const
+{
+    nodo * aux = raiz;
+    return (buscarcoincidenciaenarbol(aux, elemento));
+}
+
+template<typename T>
+int Arbin<T>::cantidadnodos(nodo *raiz) const{
+    if (raiz == NULL)
+        return 0;
+    else {
+        // Recursivamente contar los nodos en el subárbol izquierdo y derecho
+
+        int nodosIzq = cantidadnodos(raiz->izq);
+        int nodosDer = cantidadnodos(raiz->der);
+
+        // Sumar el nodo actual y los nodos de los subárboles
+        return 1 + nodosIzq + nodosDer;
+    }
+}
 
 template<typename T>
 int Arbin<T>::cantidadnodosarbol() const
@@ -76,19 +94,6 @@ int Arbin<T>::cantidadnodosarbol() const
     return cantidadnodos(raiz);
 }
 
-int cantidadnodos(nodo *raiz) const{
-    if raiz == NULL
-        return 0;
-    else {
-        // Recursivamente contar los nodos en el subárbol izquierdo y derecho
-        
-        int nodosIzq = cantidadnodos(raiz->izq);
-        int nodosDer = cantidadnodos(raiz->der);
-        
-        // Sumar el nodo actual y los nodos de los subárboles
-        return 1 + nodosIzq + nodosDer;
-    }
-}
 
 template<typename T>
 bool Arbin<T>::esvacio() const
@@ -97,11 +102,6 @@ bool Arbin<T>::esvacio() const
 }
 
 template<typename T>
-int Arbin<T>::profundidad() const
-{   
-    return profundidadarbol(raiz);
-}
-
 int Arbin<T>::profundidadarbol(nodo *raiz) const{
     if (raiz == NULL)
         return 0;
@@ -109,7 +109,7 @@ int Arbin<T>::profundidadarbol(nodo *raiz) const{
         // Calcular la profundidad de cada subárbol
         int profundidadIzq = profundidadarbol(raiz->izq);
         int profundidadDer = profundidadarbol(raiz->der);
-        
+
         // Sumar la profundidad del subárbol más profundo
         if (profundidadIzq > profundidadDer)
             return 1 + profundidadIzq;
@@ -118,5 +118,53 @@ int Arbin<T>::profundidadarbol(nodo *raiz) const{
     }
 }
 
-////ULI ACA DEFINITE LOS TIPOS DE DATPS QUE ACEPTA T ASI NO SALE EL ERROR
 
+template<typename T>
+int Arbin<T>::profundidad() const
+{
+    return profundidadarbol(raiz);
+}
+
+
+
+template<typename T>
+Lista<T> Arbin<T>::inorder(Lista<T> & G, nodo*nodoarb)
+{
+    if(nodoarb!=NULL){
+        inorder(G,nodoarb->izq);
+        G.agregarUltimo(nodoarb->elemento);
+        inorder(G,nodoarb->der);
+
+    }
+    return G;
+}
+
+template<typename T>
+Lista<T> Arbin<T>::listarordenado()
+{
+    Lista<T> G;
+    return inorder(G,raiz);
+}
+
+template<typename T>
+Lista<T> Arbin<T>::listarhojas(Lista<T> & F, nodo*nodoarb)
+{
+    if(nodoarb!=NULL){
+        if((nodoarb->izq==NULL)&&(nodoarb->der==NULL)){
+            F.agregarUltimo(nodoarb->elemento);
+        }
+        listarhojas(F,nodoarb->izq);
+        listarhojas(F,nodoarb->der);
+    }
+    return F;
+}
+
+template<typename T>
+Lista<T> Arbin<T>::frontera()
+{
+    Lista<T> F;
+    return listarhojas(F,raiz);
+}
+
+template class Arbin<int>;
+template class Arbin<float>;
